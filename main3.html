@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated To-Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #25252b;
+            overflow: hidden;
+        }
+        
+        * {
+            font-family: "Poppins", sans-serif;
+        }
+        
+        @property --a {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: 0deg;
+        }
+        
+        .box {
+            position: relative;
+            width: 450px;
+            background: repeating-conic-gradient(
+                from var(--a),
+                #ff2770 0%,
+                #ff2770 5%,
+                transparent 5%,
+                transparent 40%,
+                #ff2770 50%
+            );
+            filter: drop-shadow(0 15px 50px #000);
+            border-radius: 20px;
+            animation: rotating 4s linear infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.5s;
+            padding: 20px;
+        }
+        
+        @keyframes rotating {
+            0% { --a: 0deg; }
+            100% { --a: 360deg; }
+        }
+
+        .box::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-conic-gradient(
+                from var(--a),
+                #45f3ff 0%,
+                #45f3ff 5%,
+                transparent 5%,
+                transparent 40%,
+                #45f3ff 50%
+            );
+            filter: drop-shadow(0 15px 50px #000);
+            border-radius: 20px;
+            animation: rotating 4s linear infinite;
+            animation-delay: -1s;
+        }
+        
+        .box::after {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            background: #2d2d39;
+            border-radius: 15px;
+            border: 8px solid #25252b;
+        }
+        .todo-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #fff;
+        }
+        
+        h2 {
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            color: #45f3ff;
+        }
+        
+        input {
+            width: 80%;
+            padding: 10px;
+            outline: none;
+            border: none;
+            font-size: 1em;
+            color: #fff;
+            background: #0000001a;
+            border: 2px solid #fff;
+            border-radius: 30px;
+            margin: 5px 0;
+        }
+        input::placeholder {
+            color: #999;
+        }
+        
+        button {
+            padding: 10px;
+            background: #45f3ff;
+            border: none;
+            font-weight: 500;
+            color: #111;
+            cursor: pointer;
+            transition: 0.5s;
+            border-radius: 30px;
+            width: 50%;
+        }
+           button:hover {
+            box-shadow: 0 0 10px #45f3ff, 0 0 60px #45f3ff;
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+        
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 8px;
+            color: #45f3ff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+	   .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .stars span {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars">
+        <span style="top: 10%; left: 20%; animation-duration: 2s;"></span>
+        <span style="top: 40%; left: 60%; animation-duration: 3s;"></span>
+        <span style="top: 70%; left: 30%; animation-duration: 1.5s;"></span>
+        <span style="top: 90%; left: 80%; animation-duration: 2.5s;"></span>
+    </div>
+
+    <div class="box">
+        <div class="todo-container">
+            <h2><i class="fas fa-list-check"></i> To-Do List</h2>
+            <input type="text" id="task" placeholder="Add a new task">
+            <input type="datetime-local" id="taskDateTime">
+            <button onclick="addTask()"><i class="fas fa-plus"></i> Add</button>
+            <ul id="taskList"></ul>
+        </div>
+    </div>
+    
+    <script>
+        function addTask() {
+            let taskInput = document.getElementById("task");
+            let dateTimeInput = document.getElementById("taskDateTime");
+            let taskValue = taskInput.value.trim();
+            let dateTimeValue = dateTimeInput.value;
+
+            if (taskValue === "" || dateTimeValue === "") {
+                alert("Please enter a task and select a date & time.");
+                return;
+            }
+
+            let task = document.createElement("li");
+            task.innerHTML = `<span>${taskValue} (Due: ${new Date(dateTimeValue).toLocaleString()})</span> <button onclick="removeTask(this)"><i class='fas fa-trash'></i></button>`;
+            document.getElementById("taskList").appendChild(task);
+            setReminder(taskValue, dateTimeValue);
+            taskInput.value = "";
+            dateTimeInput.value = "";
+        }
+
+        function removeTask(btn) {
+            btn.parentElement.remove();
+        }
+
+        function setReminder(task, time) {
+            let taskTime = new Date(time).getTime();
+            let now = new Date().getTime();
+            let timeDifference = taskTime - now;
+
+            if (timeDifference > 0) {
+                setTimeout(() => {
+                    alert(`It's time to start the task: ${task}\nAre you ready?`);
+                }, timeDifference);
+            }
+        }
+    </script>
+</body>
+</html>
