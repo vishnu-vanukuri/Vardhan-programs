@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Classroom Seat Reservation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            animation: fadeInBody 2s;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            animation: fadeInContainer 1.5s;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a4e69;
+            animation: slideDownTitle 1.2s;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            background-color: #9a8c98;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .buttons button:hover {
+            background-color: #4a4e69;
+            transform: scale(1.1);
+        }
+
+        .section {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f4f1de;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-list {
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 10px;
+        }
+
+        .student-list div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .student-list div:hover {
+            transform: scale(1.05);
+        }
+
+        .space {
+            width: 20px;
+        }
+
+        .view-options {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .view-options button {
+            padding: 10px 20px;
+            background-color: #c9ada7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .view-options button:hover {
+            background-color: #4a4e69;
+            transform: scale(1.1);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #9a8c98;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: fadeInResult 1s;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeInBody {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInContainer {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDownTitle {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInResult {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Smart Classroom Seat Reservation System</h1>
+
+        <div class="buttons">
+            <button onclick="showSection('lab101')">Lab 101</button>
+            <button onclick="showSection('lab201')">Lab 201</button>
+            <button onclick="showSection('lab301')">Lab 301</button>
+            <button onclick="showSection('lab401')">Lab 401</button>
+            <button onclick="showSection('lab501')">Lab 501</button>
+            <button onclick="showSection('lab601')">Lab 601</button>
+        </div>
+
+        <!-- Lab 101 Section -->
+        <div id="lab101" class="section">
+            <h2>Lab 101</h2>
+            <div class="student-list" id="student-list101"></div>
+            <div class="view-options">
+                <button id="submit-lab101" onclick="submitAttendance('lab101')">Submit</button>
+            </div>
+            <div id="result-lab101" class="result">
+                <h3 id="result-title-lab101"></h3>
+                <ul id="result-list-lab101"></ul>
+            </div>
+        </div>
+
+        <!-- Lab 201 Section -->
+        <div id="lab201" class="section">
+            <h2>Lab 201</h2>
+            <div class="student-list" id="student-list201"></div>
+            <div class="view-options">
+                <button id="submit-lab201" onclick="submitAttendance('lab201')">Submit</button>
+            </div>
+            <div id="result-lab201" class="result">
+                <h3 id="result-title-lab201"></h3>
+                <ul id="result-list-lab201"></ul>
+            </div>
+        </div>
+
+        <!-- Lab 301 Section -->
+        <div id="lab301" class="section">
+            <h2>Lab 301</h2>
+            <div class="student-list" id="student-list301"></div>
+            <div class="view-options">
+                <button id="submit-lab301" onclick="submitAttendance('lab301')">Submit</button>
+            </div>
+            <div id="result-lab301" class="result">
+                <h3 id="result-title-lab301"></h3>
+                <ul id="result-list-lab301"></ul>
+            </div>
+        </div>
+
+        <!-- Lab 401 Section -->
+        <div id="lab401" class="section">
+            <h2>Lab 401</h2>
+            <div class="student-list" id="student-list401"></div>
+            <div class="view-options">
+                <button id="submit-lab401" onclick="submitAttendance('lab401')">Submit</button>
+            </div>
+            <div id="result-lab401" class="result">
+                <h3 id="result-title-lab401"></h3>
+                <ul id="result-list-lab401"></ul>
+            </div>
+        </div>
+
+        <!-- Lab 501 Section -->
+        <div id="lab501" class="section">
+            <h2>Lab 501</h2>
+            <div class="student-list" id="student-list501"></div>
+            <div class="view-options">
+                <button id="submit-lab501" onclick="submitAttendance('lab501')">Submit</button>
+            </div>
+            <div id="result-lab501" class="result">
+                <h3 id="result-title-lab501"></h3>
+                <ul id="result-list-lab501"></ul>
+            </div>
+        </div>
+
+        <!-- Lab 601 Section -->
+        <div id="lab601" class="section">
+            <h2>Lab 601</h2>
+            <div class="student-list" id="student-list601"></div>
+            <div class="view-options">
+                <button id="submit-lab601" onclick="submitAttendance('lab601')">Submit</button>
+            </div>
+            <div id="result-lab601" class="result">
+                <h3 id="result-title-lab601"></h3>
+                <ul id="result-list-lab601"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show the selected section
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // Function to populate the student list dynamically (72 seats, 12 columns, 6 rows)
+        function populateStudentList(classId, totalSeats) {
+            const studentListDiv = document.getElementById(classId);
+            let counter = 1;
+
+            for (let col = 0; col < 12; col++) {
+                for (let row = 0; row < 6; row++) {
+                    const studentDiv = document.createElement('div');
+                    studentDiv.innerHTML = `<input type="checkbox" id="${classId}-seat${counter}"> Seat ${counter}`;
+                    studentListDiv.appendChild(studentDiv);
+
+                    counter++;
+                }
+            }
+        }
+
+        // Function to submit attendance
+        function submitAttendance(sectionId) {
+            document.querySelectorAll(`#${sectionId} .student-list input[type='checkbox']`).forEach(input => {
+                input.disabled = true;
+            });
+            document.getElementById(`submit-${sectionId}`).disabled = true;
+        }
+
+        // Populate student lists for each lab
+        populateStudentList('student-list101', 72);  // Lab 101
+        populateStudentList('student-list201', 72);  // Lab 201
+        populateStudentList('student-list301', 72);  // Lab 301
+        populateStudentList('student-list401', 72);  // Lab 401
+        populateStudentList('student-list501', 72);  // Lab 501
+        populateStudentList('student-list601', 72);  // Lab 601
+    </script>
+</body>
+
+</html>
