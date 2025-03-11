@@ -6,34 +6,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Classroom Seat Reservation System</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 20px;
-            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            background: linear-gradient(to right, #ff0000, #000000);
+            color: #f8f9fa;
             animation: fadeInBody 2s;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: auto;
             animation: fadeInContainer 1.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
             text-align: center;
-            color: #4a4e69;
+            color: #ffffff;
             animation: slideDownTitle 1.2s;
         }
 
-        .buttons {
-            display: flex;
-            justify-content: space-between;
+        .form-container {
+            text-align: center;
             margin-bottom: 20px;
         }
 
-        .buttons button {
+        .form-container input,
+        .form-container select {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .form-container button {
             padding: 10px 20px;
-            background-color: #9a8c98;
+            background-color: #ff6f61;
             color: white;
             border: none;
             border-radius: 5px;
@@ -41,8 +57,8 @@
             transition: transform 0.3s, background-color 0.3s;
         }
 
-        .buttons button:hover {
-            background-color: #4a4e69;
+        .form-container button:hover {
+            background-color: #d45d50;
             transform: scale(1.1);
         }
 
@@ -50,63 +66,83 @@
             display: none;
             margin-top: 20px;
             padding: 15px;
-            background-color: #f4f1de;
+            background-color: #3a3b3c;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        .classroom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .screen {
+            width: 100%;
+            background-color: #222;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            margin-bottom: 20px;
+        }
+
         .student-list {
-            margin: 20px 0;
+            width: 100%;
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
+            grid-template-columns: repeat(6, 1fr); /* 6 seats per row */
             gap: 10px;
+            margin-top: 20px;
         }
 
         .student-list div {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 5px;
-            background-color: #fff;
+            padding: 10px;
+            background-color: #ffffff;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 50%; /* Make seats circular */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
             transition: transform 0.3s;
+        }
+
+        .student-list div.selected {
+            background-color: #ff6f61;
+            color: white;
         }
 
         .student-list div:hover {
             transform: scale(1.05);
         }
 
-        .space {
-            width: 20px;
-        }
-
-        .view-options {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .view-options button {
-            padding: 10px 20px;
-            background-color: #c9ada7;
+        .seat-btn {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #ff6f61;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s;
         }
 
-        .view-options button:hover {
-            background-color: #4a4e69;
-            transform: scale(1.1);
+        .seat-btn:disabled {
+            background-color: gray;
+            cursor: not-allowed;
         }
 
         .result {
             margin-top: 20px;
             padding: 10px;
-            background-color: #9a8c98;
+            background-color: #ff6f61;
             color: white;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -114,18 +150,8 @@
             animation: fadeInResult 1s;
         }
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin: 5px 0;
-        }
-
-        button:disabled {
-            background-color: gray;
-            cursor: not-allowed;
+        .seat-name {
+            color: orange; /* Seat names in orange color */
         }
 
         @keyframes fadeInBody {
@@ -180,95 +206,94 @@
     <div class="container">
         <h1>Smart Classroom Seat Reservation System</h1>
 
-        <div class="buttons">
-            <button onclick="showSection('lab101')">Lab 101</button>
-            <button onclick="showSection('lab201')">Lab 201</button>
-            <button onclick="showSection('lab301')">Lab 301</button>
-            <button onclick="showSection('lab401')">Lab 401</button>
-            <button onclick="showSection('lab501')">Lab 501</button>
-            <button onclick="showSection('lab601')">Lab 601</button>
+        <!-- Registration Form -->
+        <div class="form-container" id="registration-form">
+            <h2>Enter Your Details</h2>
+            <input type="text" id="reg-number" placeholder="Enter Registration Number" required><br>
+            <select id="lab-selection" required>
+                <option value="" disabled selected>Select Lab</option>
+                <option value="lab101">Lab 101</option>
+                <option value="lab201">Lab 201</option>
+                <option value="lab301">Lab 301</option>
+                <option value="lab401">Lab 401</option>
+                <option value="lab501">Lab 501</option>
+                <option value="lab601">Lab 601</option>
+            </select><br><br>
+            <button onclick="openReservation()">Proceed</button>
         </div>
 
-        <!-- Lab 101 Section -->
+        <!-- Lab Reservation Sections -->
         <div id="lab101" class="section">
             <h2>Lab 101</h2>
-            <div class="student-list" id="student-list101"></div>
-            <div class="view-options">
-                <button id="submit-lab101" onclick="submitAttendance('lab101')">Submit</button>
-            </div>
-            <div id="result-lab101" class="result">
-                <h3 id="result-title-lab101"></h3>
-                <ul id="result-list-lab101"></ul>
+            <div class="classroom">
+                <div class="screen">Screen</div>
+                <div class="student-list" id="student-list101"></div>
             </div>
         </div>
 
-        <!-- Lab 201 Section -->
         <div id="lab201" class="section">
             <h2>Lab 201</h2>
-            <div class="student-list" id="student-list201"></div>
-            <div class="view-options">
-                <button id="submit-lab201" onclick="submitAttendance('lab201')">Submit</button>
-            </div>
-            <div id="result-lab201" class="result">
-                <h3 id="result-title-lab201"></h3>
-                <ul id="result-list-lab201"></ul>
+            <div class="classroom">
+                <div class="screen">Screen</div>
+                <div class="student-list" id="student-list201"></div>
             </div>
         </div>
 
-        <!-- Lab 301 Section -->
         <div id="lab301" class="section">
             <h2>Lab 301</h2>
-            <div class="student-list" id="student-list301"></div>
-            <div class="view-options">
-                <button id="submit-lab301" onclick="submitAttendance('lab301')">Submit</button>
-            </div>
-            <div id="result-lab301" class="result">
-                <h3 id="result-title-lab301"></h3>
-                <ul id="result-list-lab301"></ul>
+            <div class="classroom">
+                <div class="screen">Screen</div>
+                <div class="student-list" id="student-list301"></div>
             </div>
         </div>
 
-        <!-- Lab 401 Section -->
         <div id="lab401" class="section">
             <h2>Lab 401</h2>
-            <div class="student-list" id="student-list401"></div>
-            <div class="view-options">
-                <button id="submit-lab401" onclick="submitAttendance('lab401')">Submit</button>
-            </div>
-            <div id="result-lab401" class="result">
-                <h3 id="result-title-lab401"></h3>
-                <ul id="result-list-lab401"></ul>
+            <div class="classroom">
+                <div class="screen">Screen</div>
+                <div class="student-list" id="student-list401"></div>
             </div>
         </div>
 
-        <!-- Lab 501 Section -->
         <div id="lab501" class="section">
             <h2>Lab 501</h2>
-            <div class="student-list" id="student-list501"></div>
-            <div class="view-options">
-                <button id="submit-lab501" onclick="submitAttendance('lab501')">Submit</button>
-            </div>
-            <div id="result-lab501" class="result">
-                <h3 id="result-title-lab501"></h3>
-                <ul id="result-list-lab501"></ul>
+            <div class="classroom">
+                <div class="screen">Screen</div>
+                <div class="student-list" id="student-list501"></div>
             </div>
         </div>
 
-        <!-- Lab 601 Section -->
         <div id="lab601" class="section">
             <h2>Lab 601</h2>
-            <div class="student-list" id="student-list601"></div>
-            <div class="view-options">
-                <button id="submit-lab601" onclick="submitAttendance('lab601')">Submit</button>
-            </div>
-            <div id="result-lab601" class="result">
-                <h3 id="result-title-lab601"></h3>
-                <ul id="result-list-lab601"></ul>
+            <div class="classroom">
+                <div class="screen">Screen</div>
+                <div class="student-list" id="student-list601"></div>
             </div>
         </div>
+
+        <div class="result" id="result"></div>
     </div>
 
     <script>
+        let selectedSeat = null;
+
+        function openReservation() {
+            const regNumber = document.getElementById('reg-number').value;
+            const labSelection = document.getElementById('lab-selection').value;
+
+            if (!regNumber || !labSelection) {
+                alert("Please fill in all details.");
+                return;
+            }
+
+            // Hide the registration form
+            document.getElementById('registration-form').style.display = 'none';
+
+            // Show the selected lab section
+            showSection(labSelection);
+            populateStudentList(labSelection, 72);
+        }
+
         // Function to show the selected section
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
@@ -279,35 +304,42 @@
 
         // Function to populate the student list dynamically (72 seats, 12 columns, 6 rows)
         function populateStudentList(classId, totalSeats) {
-            const studentListDiv = document.getElementById(classId);
-            let counter = 1;
-
-            for (let col = 0; col < 12; col++) {
-                for (let row = 0; row < 6; row++) {
-                    const studentDiv = document.createElement('div');
-                    studentDiv.innerHTML = `<input type="checkbox" id="${classId}-seat${counter}"> Seat ${counter}`;
-                    studentListDiv.appendChild(studentDiv);
-
-                    counter++;
-                }
+            const studentListDiv = document.getElementById(`student-list${classId.slice(-3)}`);
+            studentListDiv.innerHTML = ''; // Clear previous seats if any
+            for (let seat = 1; seat <= totalSeats; seat++) {
+                const seatDiv = document.createElement('div');
+                seatDiv.id = `${classId}-seat${seat}`;
+                seatDiv.innerHTML = `
+                    <span class="seat-name">Seat ${seat}</span>
+                    <button class="seat-btn" onclick="bookSeat('${classId}', '${seatDiv.id}', ${seat})">Book</button>
+                `;
+                studentListDiv.appendChild(seatDiv);
             }
         }
 
-        // Function to submit attendance
-        function submitAttendance(sectionId) {
-            document.querySelectorAll(`#${sectionId} .student-list input[type='checkbox']`).forEach(input => {
-                input.disabled = true;
-            });
-            document.getElementById(`submit-${sectionId}`).disabled = true;
-        }
+        // Function to book a seat
+        function bookSeat(classId, seatId, seatNumber) {
+            if (selectedSeat) {
+                alert("You can only book one seat at a time!");
+                return;
+            }
 
-        // Populate student lists for each lab
-        populateStudentList('student-list101', 72);  // Lab 101
-        populateStudentList('student-list201', 72);  // Lab 201
-        populateStudentList('student-list301', 72);  // Lab 301
-        populateStudentList('student-list401', 72);  // Lab 401
-        populateStudentList('student-list501', 72);  // Lab 501
-        populateStudentList('student-list601', 72);  // Lab 601
+            const regNumber = document.getElementById('reg-number').value;
+            const seatDiv = document.getElementById(seatId);
+            const bookButton = seatDiv.querySelector('button');
+
+            // Disable the button and mark the seat as booked
+            bookButton.disabled = true;
+            seatDiv.classList.add('selected');
+
+            selectedSeat = seatId; // Store the selected seat
+
+            alert(`Seat ${seatNumber} has been booked successfully by Registration Number: ${regNumber}!`);
+
+            // Show confirmation
+            document.getElementById('result').innerText = `You have successfully booked Seat ${seatNumber}.`;
+            document.getElementById('result').style.display = 'block';
+        }
     </script>
 </body>
 
